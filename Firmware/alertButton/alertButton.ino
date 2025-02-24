@@ -218,7 +218,7 @@ void handleButtonPress() {
     }
     if (millis() - buttonPressStart >= holdTime && !notificationSent) {
       Serial.println("Button held for 5 seconds - Sending notification...");
-      sendNotification("!!!!ALERT: Button Pressed, Call Mom!!!!", "updown", "2", "30", "10800");
+      sendNotification("!!!!ALERT: Button Pressed!", "updown", "2", "30", "10800");
       notificationSent = true;
       digitalWrite(led, HIGH);
     }
@@ -285,7 +285,7 @@ void sendNotification(const char* message, const char* sound, const char* priori
     //Setup alternate service, Pushsafer
     pushsafer.debug = true;
     struct PushSaferInput input;
-    input.message = "!!!!ALERT: Button Pressed, Call Mom!!!!";
+    input.message = "!!!!ALERT: Button Pressed!";
     input.title = "alertButton Alt";
     input.sound = "27";
     input.vibration = "1";
