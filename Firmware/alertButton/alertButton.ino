@@ -24,7 +24,7 @@
 #define uS_TO_S_FACTOR 1000000ULL
 #define TIME_TO_SLEEP 86400  // 24 hours in seconds
 #define WIFI_TIMEOUT 5000
-#define PushsaferKey "JCJtpSI4z3gLTH7Te254"
+#define PushsaferKey "yourpushsaferkey"
 
 int adcMv;
 int adcRead;
@@ -42,14 +42,14 @@ static bool notificationSent = false;
 esp_sleep_wakeup_cause_t wakeup_reason = esp_sleep_get_wakeup_cause();
 RTC_DATA_ATTR bool isAwake = false;
 
-const char* ssid = "TMOBILE-C5C4";
-const char* password = "p2g58fuxhem";
+const char* ssid = "ssid1";
+const char* password = "password1";
 
-const char* ssid2 = "Leighty";
-const char* password2 = "JC2ax6w@Q52P";
+const char* ssid2 = "ssid2";
+const char* password2 = "password2";
 
-const char* apiToken = "ahugybyh2xq23vq158yhowgwz1ozyu";
-const char* userToken = "unt1r4nn7iys1n47u4uekr2qhq56np";
+const char* apiToken = "yourapitoken";
+const char* userToken = "yourusertoken";
 
 const char* pushoverApiEndpoint = "https://api.pushover.net/1/messages.json";
 const char *PUSHOVER_ROOT_CA = "-----BEGIN CERTIFICATE-----\n"
@@ -133,7 +133,6 @@ void connectToWiFi(const char* ssid, const char* password) {
 
 float readBatVoltage() {
   analogReadResolution(12);
-  analogSetAttenuation(ADC_11db);
   adcMv = analogReadMilliVolts(batV);
   adcRead = adcMv / 1000;
   batVoltage = adcRead * 2.0725;
