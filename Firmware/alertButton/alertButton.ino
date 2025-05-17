@@ -39,7 +39,6 @@ static int lastButtonState = LOW;
 static int buttonState = LOW;
 static bool sendingNotification = false;
 static bool notificationSent = false;
-esp_sleep_wakeup_cause_t wakeup_reason = esp_sleep_get_wakeup_cause();
 RTC_DATA_ATTR bool isAwake = false;
 
 const char* ssid = "ssid1";
