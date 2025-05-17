@@ -24,13 +24,15 @@
 #define uS_TO_S_FACTOR 1000000ULL
 #define TIME_TO_SLEEP 86400  // 24 hours in seconds
 #define WIFI_TIMEOUT 5000
-#define PushsaferKey "yourpushsaferkey"
+#define PushsaferKey "JCJtpSI4z3gLTH7Te254"
 
+int adcMv;
 int adcRead;
+float battery;
 float batVoltage;
 unsigned long buttonPressStart = 0;
 unsigned long isAwakeStart = 0;
-const float lowBat = 3.5;
+const float lowBat = 3.6;
 const unsigned long holdTime = 5000;
 const unsigned long awakeTime = 15000;
 static int lastButtonState = LOW;
@@ -40,14 +42,14 @@ static bool notificationSent = false;
 esp_sleep_wakeup_cause_t wakeup_reason = esp_sleep_get_wakeup_cause();
 RTC_DATA_ATTR bool isAwake = false;
 
-const char* ssid = "ssid";
-const char* password = "password";
+const char* ssid = "TMOBILE-C5C4";
+const char* password = "p2g58fuxhem";
 
-const char* ssid2 = "ssid2"
-const char* password2 = "password2";
+const char* ssid2 = "Leighty";
+const char* password2 = "JC2ax6w@Q52P";
 
-const char* apiToken = "yourapitoken";
-const char* userToken = "yourusertoken";
+const char* apiToken = "ahugybyh2xq23vq158yhowgwz1ozyu";
+const char* userToken = "unt1r4nn7iys1n47u4uekr2qhq56np";
 
 const char* pushoverApiEndpoint = "https://api.pushover.net/1/messages.json";
 const char *PUSHOVER_ROOT_CA = "-----BEGIN CERTIFICATE-----\n"
@@ -77,10 +79,12 @@ WiFiClientSecure client;
 WiFiClient clientz;
 Pushsafer pushsafer(PushsaferKey, clientz);
 
-
-void setup() {
+ b void setup() {
   Serial.begin(115200);
-  delay(1000); 
+  delay(1000);
+
+  esp_sleep_wakeup_cause_t wakeup_reason = esp_sleep_get_wakeup_cause();
+
   pinMode(alertBtn, INPUT);
   pinMode(led, OUTPUT);
   digitalWrite(led, HIGH);
@@ -88,6 +92,12 @@ void setup() {
   isAwakeStart = millis();
   isAwake = true;
 
+  battery = readBatVoltage();
+  Serial.print("Bat Voltage: ");
+  Serial.println(battery);
+  delay(100);
+
+  //rtc_gpio_deinit(GPIO_NUM_21);
   esp_sleep_enable_ext0_wakeup(GPIO_NUM_21, 1);
   esp_sleep_enable_timer_wakeup(TIME_TO_SLEEP * uS_TO_S_FACTOR);
   print_wakeup_reason(wakeup_reason);
@@ -107,11 +117,8 @@ void setup() {
 
   if (wakeup_reason == ESP_SLEEP_WAKEUP_TIMER) { 
     checkBattery(); 
-    delay(100); 
+    delay(100);
   }
-  batVoltage = readBatVoltage();
-  Serial.print("Bat Voltage: ");
-  Serial.print(batVoltage);
 }
 
 void connectToWiFi(const char* ssid, const char* password) {
@@ -126,8 +133,10 @@ void connectToWiFi(const char* ssid, const char* password) {
 
 float readBatVoltage() {
   analogReadResolution(12);
-  adcRead = analogRead(batV);
-  batVoltage = (float)adcRead * (3.3 / 5000) * 2;
+  analogSetAttenuation(ADC_11db);
+  adcMv = analogReadMilliVolts(batV);
+  adcRead = adcMv / 1000;
+  batVoltage = adcRead * 2.0725;
   return batVoltage;
 }
 
@@ -174,6 +183,7 @@ int readPushsaferResponse() {
 }
 
 void checkBattery() {
+  sendingNotification = true;
   batVoltage = readBatVoltage();
   Serial.print("Bat Voltage: ");
   Serial.print(batVoltage);
@@ -183,6 +193,8 @@ void checkBattery() {
   } else {
     sendNotification(("alertButton VBat = " + String(batVoltage, 2)).c_str(), "vibrate", "0", "3600", "10800");
   }
+  delay(100);
+  sendingNotification = false;
 }
 
 void flashLed() {
@@ -218,7 +230,7 @@ void handleButtonPress() {
     }
     if (millis() - buttonPressStart >= holdTime && !notificationSent) {
       Serial.println("Button held for 5 seconds - Sending notification...");
-      sendNotification("!!!!ALERT: Button Pressed!", "updown", "2", "30", "10800");
+      sendNotification("!!!!ALERT: Button Pressed, Call Mom!!!!", "updown", "2", "30", "10800");
       notificationSent = true;
       digitalWrite(led, HIGH);
     }
@@ -249,12 +261,6 @@ void sendNotification(const char* message, const char* sound, const char* priori
     }
   }
 
-  if (wakeup_reason == ESP_SLEEP_WAKEUP_TIMER) { 
-    checkBattery(); 
-    delay(100); 
-  } 
-
-  
   client.setCACert(PUSHOVER_ROOT_CA);
   
   HTTPClient https;
@@ -285,7 +291,7 @@ void sendNotification(const char* message, const char* sound, const char* priori
     //Setup alternate service, Pushsafer
     pushsafer.debug = true;
     struct PushSaferInput input;
-    input.message = "!!!!ALERT: Button Pressed!";
+    input.message = "!!!!ALERT: Button Pressed, Call Mom!!!!";
     input.title = "alertButton Alt";
     input.sound = "27";
     input.vibration = "1";
@@ -338,7 +344,3 @@ void loop() {
     esp_deep_sleep_start();
   }
 }
-
-
-
-
