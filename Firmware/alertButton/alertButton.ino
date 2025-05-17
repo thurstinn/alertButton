@@ -78,7 +78,7 @@ WiFiClientSecure client;
 WiFiClient clientz;
 Pushsafer pushsafer(PushsaferKey, clientz);
 
- b void setup() {
+void setup() {
   Serial.begin(115200);
   delay(1000);
 
