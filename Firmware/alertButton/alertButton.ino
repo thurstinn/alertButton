@@ -41,8 +41,8 @@ static bool sendingNotification = false;
 static bool notificationSent = false;
 RTC_DATA_ATTR bool isAwake = false;
 
-const char* ssid = "ssid1";
-const char* password = "password1";
+const char* ssid = "ssid";
+const char* password = "password";
 
 const char* ssid2 = "ssid2";
 const char* password2 = "password2";
